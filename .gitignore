@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Django
+db.sqlite3
+staticfiles/
+media/
+
+# Entorno
+.env
+
+# Datos generados
+inbox/
+data/
+
+# Obsidian (configuración local)
+.obsidian/
+
+# Sistema
+.DS_Store
