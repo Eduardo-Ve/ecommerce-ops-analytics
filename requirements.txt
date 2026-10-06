@@ -1,6 +1,8 @@
 asgiref==3.12.1
 Django==6.1.2
 django-environ==0.14.0
+Faker==37.6.0
+pandas==2.3.3
 psycopg==3.3.6
 psycopg-binary==3.3.6
 sqlparse==0.6.0
