@@ -38,10 +38,16 @@ flowchart LR
 | `STATUS_MAP` | Estado con variantes ("ENTREGADO", "Entregado ") | Corregir: mapear |
 | `DATE_FMT` | Fecha en formato mixto | Corregir: parsear |
 | `DATE_ORDER` | `delivered_at < shipped_at` | Rechazar |
+| `REGION_FMT` | Región escrita con una variante textual | Corregir: normalizar |
 | `AMOUNT_NEG` | Monto o cantidad <= 0 | Rechazar |
 | `CUST_EMAIL_NULL` | Cliente sin email | Advertencia: cargar igual |
 
 La lista crece a medida que el generador agrega tipos de error. Cada regla debe tener un test.
+
+El generador marca filas sucias en `data/raw/catalogo_suciedad.csv`, con el archivo,
+la línea de datos (`source_row`, contando el encabezado como línea 1), la clave del
+registro, el `rule_code` y el motivo. Este catálogo es metadata de prueba; no forma
+parte de los CSV de entidades.
 
 ## Reglas de operación
 

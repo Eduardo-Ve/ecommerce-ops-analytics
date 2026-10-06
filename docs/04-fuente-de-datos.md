@@ -28,25 +28,44 @@ Se insertan a propósito y se documentan en un archivo aparte, para validar que 
 
 ## Archivos de salida
 
-Simulan sistemas distintos, con formatos de fecha y nombres de columnas distintos entre sí:
+Ejecutar desde la raíz del proyecto:
 
-- `pedidos_YYYYMM.csv`
-- `despachos_courierX.csv`
-- `devoluciones.csv`
-- `maestro_productos.xlsx`
+```bash
+python scripts/generate_synthetic_data.py
+```
+
+El script `scripts/generate_synthetic_data.py` utiliza Faker `es_CL` y Pandas.
+Genera por defecto 3.000 pedidos con semilla fija (`20251006`) en `data/raw/`.
+Se puede ajustar con `--orders`, `--seed` y `--output`. Por ejemplo:
+
+```bash
+python scripts/generate_synthetic_data.py --orders 5000 --seed 42
+```
+
+Produce un CSV por entidad (`clientes`, `productos`, `bodegas`, `transportistas`,
+`pedidos`, `items`, `despachos` y `devoluciones`) más `catalogo_suciedad.csv`.
+Este último identifica cada fila alterada por archivo, línea, clave y `rule_code`;
+no añade columnas auxiliares a los CSV de entidades.
+
+Los campos de referencia enlazan las entidades por `external_id`, SKU, código de
+bodega o nombre de transportista. Clientes, pedidos, ítems y devoluciones usan los
+`external_id` definidos en el modelo; los ítems siguen el formato `ORD-000001-L1`.
+Los CSV se ignoran en Git mediante `data/`, por lo que se versiona el generador y no
+los datos completos.
 
 ## Errores inyectados
 
-Con tasas controladas (1 a 3% por tipo):
+Se inyectan errores reproducibles y se registran en el catálogo lateral con sus
+`rule_code`:
 
-- Duplicados.
-- SKUs con espacios o en minúsculas.
-- Fechas en formatos mixtos.
-- Nulos.
-- Montos negativos.
-- Estados mal escritos.
-- Entrega antes del envío.
-- Referencias a productos inexistentes.
+- Pedidos duplicados (`DUP_ORDER`).
+- SKUs inexistentes (`SKU_UNKNOWN`) o con espacios/minúsculas (`SKU_FMT`).
+- Fechas inválidas o en formatos mixtos (`DATE_FMT`).
+- Cantidades negativas (`AMOUNT_NEG`).
+- Estados con variantes de texto en pedidos y despachos (`STATUS_MAP`).
+- Entrega anterior al envío (`DATE_ORDER`).
+- Regiones escritas distinto (`REGION_FMT`, regla documentada en
+  [Pipeline ETL](05-pipeline-etl.md)).
 
 ## Nota para el README
 
