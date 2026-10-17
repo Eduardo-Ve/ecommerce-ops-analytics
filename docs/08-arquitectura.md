@@ -27,7 +27,7 @@ ecommerce-ops-analytics/
 - **Frontend (propuesto):** templates de Django + HTMX + Plotly (o Chart.js), con endpoints JSON para los gráficos. Rápido de construir y muestra dominio del lado servidor. La alternativa es Next.js consumiendo DRF, con más tiempo de desarrollo.
 - **Ejecución del ETL:** comando de gestión (`python manage.py run_etl`) en el MVP. Celery y subida de archivos desde la interfaz quedan para v2.
 - **Vistas materializadas:** creadas con migraciones `RunSQL` y refrescadas al final del ETL.
-- **Tests con pytest:** reglas de validación con casos puntuales, KPIs contra un dataset pequeño con resultados conocidos, e idempotencia del ETL.
+- **Tests:** Django TestCase/unittest para reglas de validación, KPIs contra un dataset pequeño con resultados conocidos e idempotencia del ETL.
 - **CI:** GitHub Actions con tests y linter.
 - **Docker Compose:** servicios `web` y `db` como mínimo.
 - **Configuración:** variables de entorno, con `.env.example`.
