@@ -20,20 +20,21 @@ Entregable: repo con documentación.
 
 Entregable: archivos sucios generados y reproducibles.
 
-- [ ] Proyecto Django base con Docker Compose y PostgreSQL
-- [ ] Modelos, migraciones y constraints
-- [ ] Generador de datos sintéticos con semilla fija
+- [ ] Proyecto Django base con Docker Compose y PostgreSQL (conexión local pendiente de validar)
+- [x] Modelos, migraciones y constraints definidos; `makemigrations --check` sin cambios
+- [x] Generador de datos sintéticos con semilla fija y tests
 - [ ] Documento de ground truth con los patrones ocultos
 
 ## Fase 2: ETL (2 semanas)
 
 Entregable: `run_etl` carga datos y reporta rechazos.
 
-- [ ] Extract con hash e idempotencia
-- [ ] Staging
-- [ ] Reglas de validación y corrección, cada una con test
-- [ ] Load con upsert por dependencias
-- [ ] Logs en `etl_run`, `etl_source_file` y `etl_reject`
+- [x] Extract con hash e idempotencia
+- [x] Staging de filas crudas
+- [ ] Completar tests de reglas, correcciones y rechazos
+- [x] Load con upsert por dependencias
+- [x] Logs en `etl_run`, `etl_source_file` y `etl_reject`
+- [ ] Prueba de integración completa contra PostgreSQL
 
 ## Fase 3: KPIs en SQL (1 a 2 semanas)
 

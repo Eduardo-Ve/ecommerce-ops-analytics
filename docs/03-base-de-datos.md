@@ -146,7 +146,7 @@ Se implementan en la app `etl`.
 | id | bigint PK | |
 | run_id | FK etl_run | |
 | filename | varchar | |
-| file_hash | char(64) | garantiza idempotencia (ver pendientes: cómo evitar que un run fallido bloquee el reintento) |
+| file_hash | char(64) | SHA-256; único solo entre archivos cargados exitosamente |
 | entity | varchar(30) | |
 | rows | int | |
 
@@ -165,7 +165,11 @@ Se implementan en la app `etl`.
 
 ### Staging
 
-Tablas `stg_<entidad>` con todas las columnas como `text`, más `source_file_id` y `row_number`. Se crean con `RunSQL` en una migración y se cargan con Pandas o `COPY`, no con el ORM.
+`etl_stagingrow` conserva cada fila original en JSONB, junto con `source_file_id`,
+`entity` y `row_number`. La restricción única `(source_file_id, row_number)` evita
+duplicar filas dentro de una carga. Se inserta con `bulk_create` antes de validar;
+los archivos se procesan en orden de dependencias y los errores de fila quedan
+asociados a `etl_reject`.
 
 ## Decisiones de diseño
 
@@ -189,7 +193,7 @@ Tablas `stg_<entidad>` con todas las columnas como `text`, más `source_file_id`
 - [x] Validar este diagrama antes de crear la primera migración.
 - [x] Decidir si `unit_price` incluye IVA o es neto, y si el margen considera descuentos y costo de envío (el modelo actual no los tiene).
 - [ ] Definir la regla de estado entre `sales_order.status` y `shipment.status` (derivar uno del otro o validar coherencia en el ETL).
-- [ ] `etl_source_file.file_hash`: evitar que un run fallido bloquee el reintento (crear el registro en la misma transacción de la carga o aplicar el único solo a archivos cargados con éxito).
+- [x] `etl_source_file.file_hash`: los archivos fallidos no bloquean el reintento; la unicidad aplica solo a archivos cargados.
 - [ ] Reglas de validación entre filas en el ETL: suma de devoluciones por ítem <= cantidad vendida; un despacho por cada bodega presente en las líneas del pedido.
 - [ ] Normalizar `region` y `comuna` en el ETL (variantes de texto).
 
