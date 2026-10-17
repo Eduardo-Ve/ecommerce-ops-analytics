@@ -18,6 +18,7 @@ DEFAULT_SEED = 20251006
 START_DATE = datetime(2024, 10, 1, tzinfo=timezone.utc)
 END_DATE = datetime(2025, 9, 30, 23, 59, tzinfo=timezone.utc)
 DIRTY_RATE = 0.01
+INVALID_DATE = "2025-13-40 25:61:00"
 
 REGIONS = [
     ("Región Metropolitana", ["Santiago", "Puente Alto", "Maipú"]),
@@ -260,13 +261,13 @@ def generate_data(orders_count: int, seed: int) -> dict[str, pd.DataFrame]:
                 "Estado con variante textual o etiqueta no normalizada.",
             )
         elif field_choice == "date":
-            orders_df.at[index, "created_at"] = "2025-13-40 25:61:00"
+            orders_df.at[index, "created_at"] = INVALID_DATE
             annotate(
                 "pedidos",
                 index,
                 order["external_id"],
-                "DATE_FMT",
-                "Fecha inválida: día, mes y hora fuera de rango.",
+                "DATE_INVALID",
+                "Fecha imposible: día, mes y hora fuera de rango.",
             )
         else:
             orders_df.at[index, "destination_region"] = "Metropolitana de Santiago"
@@ -280,9 +281,9 @@ def generate_data(orders_count: int, seed: int) -> dict[str, pd.DataFrame]:
 
     mixed_date_count = max(1, round(orders_count * DIRTY_RATE))
     for index in rng.sample(range(orders_count), k=mixed_date_count):
-        if orders_df.at[index, "created_at"] == "2025-13-40 25:61:00":
+        if orders_df.at[index, "created_at"] == INVALID_DATE:
             continue
-        order_id = orders_df.at[index, "external_id"]
+        order_id = str(orders_df.at[index, "external_id"])
         orders_df.at[index, "created_at"] = mixed_date(order_dates[order_id])
         annotate(
             "pedidos",
@@ -342,7 +343,7 @@ def generate_data(orders_count: int, seed: int) -> dict[str, pd.DataFrame]:
         orders_df.at[index, "status"] = rng.choice(
             ["ENTREGADO", "Entregado ", "PAGADO"]
         )
-        order_id = orders_df.at[index, "external_id"]
+        order_id = str(orders_df.at[index, "external_id"])
         annotate(
             "pedidos",
             index,
@@ -364,7 +365,9 @@ def generate_data(orders_count: int, seed: int) -> dict[str, pd.DataFrame]:
         )
 
     shipment_date_indices = [
-        index for index, row in shipments_df.iterrows() if row["shipped_at"]
+        index
+        for index in range(len(shipments_df))
+        if shipments_df.at[index, "shipped_at"]
     ]
     if shipment_date_indices:
         date_order_index = rng.choice(shipment_date_indices)

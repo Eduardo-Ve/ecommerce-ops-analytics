@@ -23,6 +23,7 @@ class SyntheticDataGeneratorTests(unittest.TestCase):
             "SKU_UNKNOWN",
             "STATUS_MAP",
             "DATE_FMT",
+            "DATE_INVALID",
             "DATE_ORDER",
             "AMOUNT_NEG",
             "REGION_FMT",
@@ -56,11 +57,14 @@ class SyntheticDataGeneratorTests(unittest.TestCase):
                     )
                 elif entry.rule_code == "AMOUNT_NEG":
                     self.assertLess(int(frame.iloc[row_index]["quantity"]), 0)
+                elif entry.rule_code == "DATE_INVALID":
+                    self.assertEqual(
+                        frame.iloc[row_index]["created_at"],
+                        "2025-13-40 25:61:00",
+                    )
                 elif entry.rule_code == "DATE_FMT":
                     created_at = frame.iloc[row_index]["created_at"]
-                    self.assertTrue(
-                        created_at == "2025-13-40 25:61:00" or "/" in created_at
-                    )
+                    self.assertIn("/", created_at)
                 elif entry.rule_code == "REGION_FMT":
                     self.assertEqual(
                         frame.iloc[row_index]["destination_region"],
